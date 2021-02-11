@@ -636,6 +636,8 @@ int main(void)
  8000668:	480a      	ldr	r0, [pc, #40]	; (8000694 <main+0x1bc>)
  800066a:	f000 fd2d 	bl	80010c8 <HAL_GPIO_WritePin>
 	  			}
+
+	  		//change half period of LED 3
 	  		if (j == 0) //index 0
  800066e:	f897 3026 	ldrb.w	r3, [r7, #38]	; 0x26
  8000672:	2b00      	cmp	r3, #0

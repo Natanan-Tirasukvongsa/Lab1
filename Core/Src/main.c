@@ -191,6 +191,8 @@ int main(void)
 	  			{
 	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET); //turn on
 	  			}
+
+	  		//change half period of LED 3
 	  		if (j == 0) //index 0
 	  			{
 	  				j= 1; //index 1

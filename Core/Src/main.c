@@ -191,8 +191,17 @@ int main(void)
 	  			{
 	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET); //turn on
 	  			}
-
+	  		if (j == 0) //index 0
+	  			{
+	  				j= 1; //index 1
+	  			}
+	  		else //index 1
+	  			{
+	  				j=0; //reset index
+	  			}
 	  		}
+
+
   }
   /* USER CODE END 3 */
 }

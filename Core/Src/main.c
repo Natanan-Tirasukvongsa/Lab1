@@ -91,9 +91,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
   GPIO_PinState SwitchState1[2]; //now,last for part 1
   GPIO_PinState SwitchState2[2]; //now,last for part 2
-  uint16_t LED1_HalfPeriod[4] = {1000,500,250,167}; // frequency
-  uint8_t i = 0; //index of half period
-  uint32_t TimeStamp = 0; //count time for delay
+  GPIO_PinState SwitchState3[2]; //now,last for part 2
+  uint16_t LED1_HalfPeriod[4] = {1000,500,250,167}; // HalfPeriod of LED1 (D1)
+  uint16_t LED3_TimeShow[2]={500, 1500}; //time on off of LED3 (D5)
+  uint8_t i = 0; //index of half period for part 1
+  uint8_t j = 0; //index of Time show for part 3
+  uint32_t TimeStamp = 0; //count time for delay for part 1
+  uint32_t Time = 0; //count time for delay for part 3
   uint32_t ButtonTimeStamp = 0; //count time for button delay
 
   /* USER CODE END 2 */
@@ -107,53 +111,88 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  	  if(HAL_GetTick()-ButtonTimeStamp>=100)//ms
 	  	  {
-	  		  ButtonTimeStamp = HAL_GetTick();
+	  		  ButtonTimeStamp = HAL_GetTick(); //save time present for button delay
 	  		  //switch press is low
 	  		  SwitchState1[0]= HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_10); //save present state for part1
 	  		  SwitchState2[0]= HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3); //save present state for part2
+	  		  SwitchState3[0]= HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5); //save present state for part3
+
 	  		  if(SwitchState1[1]==GPIO_PIN_SET
-	  				  && SwitchState1[0]==GPIO_PIN_RESET)
+	  				  && SwitchState1[0]==GPIO_PIN_RESET) //if press button (s1)
 	  		  {
 	  			  //change half period of LED 1
-	  			  if (i < 3)
+	  			  if (i < 3) //index 0 - 2
 	  			  {
-	  				  i += 1;
+	  				  i += 1; //add 1
 	  			  }
-	  			  else
+	  			  else //index 3
 	  			  {
-	  				  i=0;
+	  				  i=0; //reset index
 	  			  }
 	  		  }
+
 	  		  if(SwitchState2[1]==GPIO_PIN_SET
-	  				  && SwitchState2[0]==GPIO_PIN_RESET)
+	  				  && SwitchState2[0]==GPIO_PIN_RESET) //if press button (s2)
 	  		  {
 	  			  //change state of LED 2
-	  			if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7)==GPIO_PIN_SET)
+	  			if(HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7)==GPIO_PIN_SET) //if LED2 (D3) turn on
 	  			{
-	  				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET);
+	  				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_RESET); // turn off
 	  			}
-	  			else
+	  			else //if LED2 (D3) turn off
 	  			{
-	  				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
+	  				HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET); //turn on
 	  			}
 	  		  }
 
-	  		  SwitchState1[1]=SwitchState1[0];
-	  		  SwitchState2[1]=SwitchState2[0];
+	  		  if(SwitchState3[1]==GPIO_PIN_SET
+	  				&& SwitchState3[0]==GPIO_PIN_RESET) //if press button (s3)
+	  			{
+	  			//change half period of LED 3
+	  			if (j == 0) //index 0
+	  				{
+	  					j= 1; //index 1
+	  				}
+	  			else //index 1
+	  				{
+	  					j=0; //reset index
+	  				}
+	  			}
+
+	  		  SwitchState1[1]=SwitchState1[0]; //save last state for part 1
+	  		  SwitchState2[1]=SwitchState2[0]; //save last state for part 2
+	  		  SwitchState3[1]=SwitchState3[0]; //save last state for part 3
+
 	  	  }
+
 	  //run LED
-	  	  if (HAL_GetTick()-TimeStamp >= LED1_HalfPeriod[i])
+
+	  	  if (HAL_GetTick()-TimeStamp >= LED1_HalfPeriod[i]) //half period of LED1 (D1)
 	  	  {
-	  		  TimeStamp = HAL_GetTick();
-	  		  if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9)==GPIO_PIN_SET)
+	  		  TimeStamp = HAL_GetTick(); //save present time for delay
+	  		  if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_9)==GPIO_PIN_SET) //if LED1 (D1) turn on
 	  		  {
-	  			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
+	  			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET); //turn off
 	  		  }
-	  		  else
+	  		  else //if LED1 (D1) turn off
 	  		  {
-	  			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+	  			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); //turn on
 	  		  }
 	  	  }
+
+	  	if (HAL_GetTick()-Time >= LED3_TimeShow[j]) //half period of LED3 (D5)
+	  		{
+	  			Time = HAL_GetTick(); //save present time for delay
+	  		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6)==GPIO_PIN_SET) //if LED3 (D5) turn on
+	  			{
+	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); //turn off
+	  			}
+	  		else //if LED3 (D5) turn off
+	  			{
+	  				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET); //turn on
+	  			}
+
+	  		}
   }
   /* USER CODE END 3 */
 }
@@ -284,6 +323,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PB6 */
   GPIO_InitStruct.Pin = GPIO_PIN_6;

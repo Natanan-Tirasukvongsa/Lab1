@@ -40,7 +40,6 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart2;
@@ -53,7 +52,6 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -93,7 +91,6 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  MX_TIM1_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   GPIO_PinState SwitchState1[2]; //now,last for part 1
@@ -106,11 +103,12 @@ int main(void)
   uint32_t TimeStamp = 0; //count time for delay for part 1
   uint32_t Time = 0; //count time for delay for part 3
   uint32_t ButtonTimeStamp = 0; //count time for button delay
-  HAL_TIM_Base_Start_IT(&htim1);
+  //HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
   GPIO_PinState SwitchState4[2]; //now,last for part 4
   uint16_t PWM[5] = {0,250,500,750,1000}; // PWM (D4)
-  uint8_t k = __HAL_TIM_GET_COMPARE(&htim3, TIM_CHANNEL_2); //the period is 1000. Duty cycle should vary between 0 and 1000.
+  //uint8_t k = __HAL_TIM_GET_COMPARE(&htim3, TIM_CHANNEL_2); //the period is 1000. Duty cycle should vary between 0 and 1000.
+  uint8_t k = 0; ////index of pwm for part 4
 
   /* USER CODE END 2 */
 
@@ -176,12 +174,12 @@ int main(void)
 	  				&& SwitchState4[0]==GPIO_PIN_RESET) //if press button (s1)
 	  			{
 	  			//change half period of LED 4
-	  			if (k < 4) //index 0 - 2
+	  			if (k < 4) //index 0 - 4
 	  				{
 	  					k += 1; //add
 	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]);
 	  				}
-	  			else //index 3
+	  			else //index 5
 	  				{
 	  					k=0; //reset index
 	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]);
@@ -280,52 +278,6 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-}
-
-/**
-  * @brief TIM1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM1_Init(void)
-{
-
-  /* USER CODE BEGIN TIM1_Init 0 */
-
-  /* USER CODE END TIM1_Init 0 */
-
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM1_Init 1 */
-
-  /* USER CODE END TIM1_Init 1 */
-  htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 719;
-  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 49999;
-  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim1.Init.RepetitionCounter = 0;
-  htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim1, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM1_Init 2 */
-
-  /* USER CODE END TIM1_Init 2 */
-
 }
 
 /**

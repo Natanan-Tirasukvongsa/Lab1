@@ -200,7 +200,7 @@ int main(void)
 
 	  	  }
 
-	  //run LED
+	  //run LED1
 
 	  	  if (HAL_GetTick()-TimeStamp >= LED1_HalfPeriod[i]) //half period of LED1 (D1)
 	  	  {
@@ -214,6 +214,8 @@ int main(void)
 	  			  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); //turn on
 	  		  }
 	  	  }
+
+	  	//run LED3
 
 	  	if (HAL_GetTick()-Time >= LED3_TimeShow[j]) //half period of LED3 (D5)
 	  		{

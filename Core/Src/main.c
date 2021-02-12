@@ -93,22 +93,29 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+
   GPIO_PinState SwitchState1[2]; //now,last for part 1
   GPIO_PinState SwitchState2[2]; //now,last for part 2
-  GPIO_PinState SwitchState3[2]; //now,last for part 2
+  GPIO_PinState SwitchState3[2]; //now,last for part 3
+  GPIO_PinState SwitchState4[2]; //now,last for part 4
+
   uint16_t LED1_HalfPeriod[4] = {1000,500,250,167}; // HalfPeriod of LED1 (D1)
   uint16_t LED3_TimeShow[2]={500, 1500}; //time on off of LED3 (D5)
+
   uint8_t i = 0; //index of half period for part 1
   uint8_t j = 0; //index of Time show for part 3
+  uint8_t k = 0; ////index of pwm for part 4
+
   uint32_t TimeStamp = 0; //count time for delay for part 1
   uint32_t Time = 0; //count time for delay for part 3
   uint32_t ButtonTimeStamp = 0; //count time for button delay
+
   //HAL_TIM_Base_Start_IT(&htim1);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-  GPIO_PinState SwitchState4[2]; //now,last for part 4
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);//enable PWM output on LED pin
+
   uint16_t PWM[5] = {0,250,500,750,1000}; // PWM (D4)
   //uint8_t k = __HAL_TIM_GET_COMPARE(&htim3, TIM_CHANNEL_2); //the period is 1000. Duty cycle should vary between 0 and 1000.
-  uint8_t k = 0; ////index of pwm for part 4
+
 
   /* USER CODE END 2 */
 
@@ -171,18 +178,18 @@ int main(void)
 	  			}
 
 	  		if(SwitchState4[1]==GPIO_PIN_SET
-	  				&& SwitchState4[0]==GPIO_PIN_RESET) //if press button (s1)
+	  				&& SwitchState4[0]==GPIO_PIN_RESET) //if press button (s4)
 	  			{
 	  			//change half period of LED 4
 	  			if (k < 4) //index 0 - 4
 	  				{
 	  					k += 1; //add
-	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]);
+	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]); //update the PWM control register
 	  				}
 	  			else //index 5
 	  				{
 	  					k=0; //reset index
-	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]);
+	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]); //update the PWM control register
 	  				}
 	  			}
 

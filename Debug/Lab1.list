@@ -27,9 +27,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0002000c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000093e6  00000000  00000000  0002003c  2**0
+ 12 .debug_info   000093e8  00000000  00000000  0002003c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_abbrev 00001598  00000000  00000000  00029422  2**0
+ 13 .debug_abbrev 00001598  00000000  00000000  00029424  2**0
                   CONTENTS, READONLY, DEBUGGING
  14 .debug_aranges 00000af0  00000000  00000000  0002a9c0  2**3
                   CONTENTS, READONLY, DEBUGGING
@@ -388,50 +388,53 @@ int main(void)
  80004ea:	f000 fa05 	bl	80008f8 <MX_USART2_UART_Init>
   MX_TIM3_Init();
  80004ee:	f000 f98d 	bl	800080c <MX_TIM3_Init>
-  /* USER CODE BEGIN 2 */
   GPIO_PinState SwitchState1[2]; //now,last for part 1
   GPIO_PinState SwitchState2[2]; //now,last for part 2
-  GPIO_PinState SwitchState3[2]; //now,last for part 2
+  GPIO_PinState SwitchState3[2]; //now,last for part 3
+  GPIO_PinState SwitchState4[2]; //now,last for part 4
+
   uint16_t LED1_HalfPeriod[4] = {1000,500,250,167}; // HalfPeriod of LED1 (D1)
  80004f2:	4a8a      	ldr	r2, [pc, #552]	; (800071c <main+0x244>)
- 80004f4:	f107 0314 	add.w	r3, r7, #20
+ 80004f4:	f107 0310 	add.w	r3, r7, #16
  80004f8:	e892 0003 	ldmia.w	r2, {r0, r1}
  80004fc:	e883 0003 	stmia.w	r3, {r0, r1}
   uint16_t LED3_TimeShow[2]={500, 1500}; //time on off of LED3 (D5)
  8000500:	4b87      	ldr	r3, [pc, #540]	; (8000720 <main+0x248>)
  8000502:	681b      	ldr	r3, [r3, #0]
- 8000504:	613b      	str	r3, [r7, #16]
+ 8000504:	60fb      	str	r3, [r7, #12]
+
   uint8_t i = 0; //index of half period for part 1
  8000506:	2300      	movs	r3, #0
  8000508:	f887 3037 	strb.w	r3, [r7, #55]	; 0x37
   uint8_t j = 0; //index of Time show for part 3
  800050c:	2300      	movs	r3, #0
  800050e:	f887 3036 	strb.w	r3, [r7, #54]	; 0x36
-  uint32_t TimeStamp = 0; //count time for delay for part 1
- 8000512:	2300      	movs	r3, #0
- 8000514:	633b      	str	r3, [r7, #48]	; 0x30
-  uint32_t Time = 0; //count time for delay for part 3
- 8000516:	2300      	movs	r3, #0
- 8000518:	62fb      	str	r3, [r7, #44]	; 0x2c
-  uint32_t ButtonTimeStamp = 0; //count time for button delay
- 800051a:	2300      	movs	r3, #0
- 800051c:	62bb      	str	r3, [r7, #40]	; 0x28
-  //HAL_TIM_Base_Start_IT(&htim1);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
- 800051e:	2104      	movs	r1, #4
- 8000520:	4880      	ldr	r0, [pc, #512]	; (8000724 <main+0x24c>)
- 8000522:	f001 fbcd 	bl	8001cc0 <HAL_TIM_PWM_Start>
-  GPIO_PinState SwitchState4[2]; //now,last for part 4
-  uint16_t PWM[5] = {0,250,500,750,1000}; // PWM (D4)
- 8000526:	4a80      	ldr	r2, [pc, #512]	; (8000728 <main+0x250>)
- 8000528:	463b      	mov	r3, r7
- 800052a:	ca07      	ldmia	r2, {r0, r1, r2}
- 800052c:	c303      	stmia	r3!, {r0, r1}
- 800052e:	801a      	strh	r2, [r3, #0]
-  //uint8_t k = __HAL_TIM_GET_COMPARE(&htim3, TIM_CHANNEL_2); //the period is 1000. Duty cycle should vary between 0 and 1000.
   uint8_t k = 0; ////index of pwm for part 4
- 8000530:	2300      	movs	r3, #0
- 8000532:	f887 3027 	strb.w	r3, [r7, #39]	; 0x27
+ 8000512:	2300      	movs	r3, #0
+ 8000514:	f887 3035 	strb.w	r3, [r7, #53]	; 0x35
+
+  uint32_t TimeStamp = 0; //count time for delay for part 1
+ 8000518:	2300      	movs	r3, #0
+ 800051a:	633b      	str	r3, [r7, #48]	; 0x30
+  uint32_t Time = 0; //count time for delay for part 3
+ 800051c:	2300      	movs	r3, #0
+ 800051e:	62fb      	str	r3, [r7, #44]	; 0x2c
+  uint32_t ButtonTimeStamp = 0; //count time for button delay
+ 8000520:	2300      	movs	r3, #0
+ 8000522:	62bb      	str	r3, [r7, #40]	; 0x28
+
+  //HAL_TIM_Base_Start_IT(&htim1);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);//enable PWM output on LED pin
+ 8000524:	2104      	movs	r1, #4
+ 8000526:	487f      	ldr	r0, [pc, #508]	; (8000724 <main+0x24c>)
+ 8000528:	f001 fbca 	bl	8001cc0 <HAL_TIM_PWM_Start>
+
+  uint16_t PWM[5] = {0,250,500,750,1000}; // PWM (D4)
+ 800052c:	4a7e      	ldr	r2, [pc, #504]	; (8000728 <main+0x250>)
+ 800052e:	463b      	mov	r3, r7
+ 8000530:	ca07      	ldmia	r2, {r0, r1, r2}
+ 8000532:	c303      	stmia	r3!, {r0, r1}
+ 8000534:	801a      	strh	r2, [r3, #0]
   while (1)
   {
     /* USER CODE END WHILE */
@@ -472,7 +475,7 @@ int main(void)
  8000578:	486d      	ldr	r0, [pc, #436]	; (8000730 <main+0x258>)
  800057a:	f000 fead 	bl	80012d8 <HAL_GPIO_ReadPin>
  800057e:	4603      	mov	r3, r0
- 8000580:	733b      	strb	r3, [r7, #12]
+ 8000580:	763b      	strb	r3, [r7, #24]
 
 	  		  if(SwitchState1[1]==GPIO_PIN_SET
  8000582:	f897 3025 	ldrb.w	r3, [r7, #37]	; 0x25
@@ -567,26 +570,26 @@ int main(void)
 	  			}
 
 	  		if(SwitchState4[1]==GPIO_PIN_SET
- 8000602:	7b7b      	ldrb	r3, [r7, #13]
+ 8000602:	7e7b      	ldrb	r3, [r7, #25]
  8000604:	2b01      	cmp	r3, #1
  8000606:	d125      	bne.n	8000654 <main+0x17c>
-	  				&& SwitchState4[0]==GPIO_PIN_RESET) //if press button (s1)
- 8000608:	7b3b      	ldrb	r3, [r7, #12]
+	  				&& SwitchState4[0]==GPIO_PIN_RESET) //if press button (s4)
+ 8000608:	7e3b      	ldrb	r3, [r7, #24]
  800060a:	2b00      	cmp	r3, #0
  800060c:	d122      	bne.n	8000654 <main+0x17c>
 	  			{
 	  			//change half period of LED 4
 	  			if (k < 4) //index 0 - 4
- 800060e:	f897 3027 	ldrb.w	r3, [r7, #39]	; 0x27
+ 800060e:	f897 3035 	ldrb.w	r3, [r7, #53]	; 0x35
  8000612:	2b03      	cmp	r3, #3
  8000614:	d810      	bhi.n	8000638 <main+0x160>
 	  				{
 	  					k += 1; //add
- 8000616:	f897 3027 	ldrb.w	r3, [r7, #39]	; 0x27
+ 8000616:	f897 3035 	ldrb.w	r3, [r7, #53]	; 0x35
  800061a:	3301      	adds	r3, #1
- 800061c:	f887 3027 	strb.w	r3, [r7, #39]	; 0x27
-	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]);
- 8000620:	f897 3027 	ldrb.w	r3, [r7, #39]	; 0x27
+ 800061c:	f887 3035 	strb.w	r3, [r7, #53]	; 0x35
+	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]); //update the PWM control register
+ 8000620:	f897 3035 	ldrb.w	r3, [r7, #53]	; 0x35
  8000624:	005b      	lsls	r3, r3, #1
  8000626:	f107 0238 	add.w	r2, r7, #56	; 0x38
  800062a:	4413      	add	r3, r2
@@ -600,9 +603,9 @@ int main(void)
 	  				{
 	  					k=0; //reset index
  8000638:	2300      	movs	r3, #0
- 800063a:	f887 3027 	strb.w	r3, [r7, #39]	; 0x27
-	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]);
- 800063e:	f897 3027 	ldrb.w	r3, [r7, #39]	; 0x27
+ 800063a:	f887 3035 	strb.w	r3, [r7, #53]	; 0x35
+	  					__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]); //update the PWM control register
+ 800063e:	f897 3035 	ldrb.w	r3, [r7, #53]	; 0x35
  8000642:	005b      	lsls	r3, r3, #1
  8000644:	f107 0238 	add.w	r2, r7, #56	; 0x38
  8000648:	4413      	add	r3, r2
@@ -623,8 +626,8 @@ int main(void)
  8000664:	7f3b      	ldrb	r3, [r7, #28]
  8000666:	777b      	strb	r3, [r7, #29]
 	  		  SwitchState4[1]=SwitchState4[0]; //save last state for part 4
- 8000668:	7b3b      	ldrb	r3, [r7, #12]
- 800066a:	737b      	strb	r3, [r7, #13]
+ 8000668:	7e3b      	ldrb	r3, [r7, #24]
+ 800066a:	767b      	strb	r3, [r7, #25]
 
 	  	  }
 
@@ -639,7 +642,7 @@ int main(void)
  800067a:	005b      	lsls	r3, r3, #1
  800067c:	f107 0138 	add.w	r1, r7, #56	; 0x38
  8000680:	440b      	add	r3, r1
- 8000682:	f833 3c24 	ldrh.w	r3, [r3, #-36]
+ 8000682:	f833 3c28 	ldrh.w	r3, [r3, #-40]
  8000686:	429a      	cmp	r2, r3
  8000688:	d317      	bcc.n	80006ba <main+0x1e2>
 	  	  {
@@ -680,7 +683,7 @@ int main(void)
  80006c8:	005b      	lsls	r3, r3, #1
  80006ca:	f107 0138 	add.w	r1, r7, #56	; 0x38
  80006ce:	440b      	add	r3, r1
- 80006d0:	f833 3c28 	ldrh.w	r3, [r3, #-40]
+ 80006d0:	f833 3c2c 	ldrh.w	r3, [r3, #-44]
  80006d4:	429a      	cmp	r2, r3
  80006d6:	f4ff af2e 	bcc.w	8000536 <main+0x5e>
 	  		{

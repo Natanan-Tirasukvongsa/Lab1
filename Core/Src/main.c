@@ -113,9 +113,10 @@ int main(void)
   //HAL_TIM_Base_Start_IT(&htim1);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);//enable PWM output on LED pin
 
-  uint16_t PWM[5] = {0,250,500,750,1000}; // PWM (D4)
-  //uint8_t k = __HAL_TIM_GET_COMPARE(&htim3, TIM_CHANNEL_2); //the period is 1000. Duty cycle should vary between 0 and 1000.
 
+  uint16_t PWM[5] = {1000,750,500,250,0}; // PWM (D4)
+  //uint8_t k = __HAL_TIM_GET_COMPARE(&htim3, TIM_CHANNEL_2); //the period is 1000. Duty cycle should vary between 0 and 1000.
+  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, PWM[k]); //update the PWM control register
 
   /* USER CODE END 2 */
 
